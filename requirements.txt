@@ -1,0 +1,4 @@
+toml==0.10.2
+pytest==8.3.4
+pytest-cov==6.0.0
+pylint==3.3.3

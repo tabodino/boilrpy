@@ -1,0 +1,45 @@
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "boilrpy"
+version = "0.3.0"
+description = "A python development boilerplate generator"
+authors = ["Jean-Michel LIEVIN <jeanmichel.liev1@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[tool.poetry.scripts]
+boilrpy = "boilrpy.__main__:main"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+toml = "^0.10.2"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.4"
+pytest-cov = "^6.0.0"
+pylint = "^3.3.3"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["boilrpy*"]
+
+[tool.setuptools.package-data]
+boilrpy = ["py.typed"]
+
+[tool.pytest.ini_options]
+addopts = "--cov=src/boilrpy --cov-report=term-missing"
+testpaths = [
+    "tests",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "pytest-cov", "pylint"]
+
