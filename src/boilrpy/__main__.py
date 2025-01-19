@@ -8,7 +8,6 @@ def main():
     config = Config()
     cli = CLI(config)
     project_info = cli.gather_project_info()
-    print(project_info)
     creator = ProjectCreator(config)
     creator.create_project(project_info)
 

@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "boilrpy"
-version = "0.3.0"
+version = "0.4.0"
 description = "A python development boilerplate generator"
 authors = ["Jean-Michel LIEVIN <jeanmichel.liev1@gmail.com>"]
 license = "MIT"
@@ -21,6 +21,7 @@ boilrpy = "boilrpy.__main__:main"
 [tool.poetry.dependencies]
 python = "^3.11"
 toml = "^0.10.2"
+colorama = "^0.4.6"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.4"

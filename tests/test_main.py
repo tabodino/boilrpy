@@ -71,17 +71,6 @@ def test_main(MockProjectCreator, MockCLI, MockConfig):
 def import_module(module_name):
     return importlib.import_module(module_name)
 
-
-def test_print_project_info(capsys, mock_cli):
-    with patch("boilrpy.__main__.Config"), \
-            patch("boilrpy.__main__.CLI", return_value=mock_cli), \
-            patch("boilrpy.__main__.ProjectCreator"):
-        main()
-
-    captured = capsys.readouterr()
-    assert str(mock_cli.gather_project_info.return_value) in captured.out
-
-
 @patch("boilrpy.__main__.Config")
 @patch("boilrpy.__main__.CLI")
 @patch("boilrpy.__main__.ProjectCreator")
