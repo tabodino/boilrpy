@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.5.0] - 2024-01-21
+### Added
+- Add pylint generation file
+- Upate file generator script with Factory pattern
+
+## [0.4.0] - 2024-01-19
+### Added
+- Add color in CLI
+
 ## [0.3.2] - 2024-01-17
 ### Fixed
 - Remove debug print method 

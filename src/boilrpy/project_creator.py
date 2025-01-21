@@ -61,6 +61,8 @@ class ProjectCreator:
 
         self._create_empty_requirements_txt()
 
+        self._create_linter_file(project_info["use_pylint"])
+
         self._initialize_git_repository()
 
 
@@ -109,8 +111,12 @@ class ProjectCreator:
         try:
             subprocess.run(["poetry", "init", "-n"], check=True)
             self._update_pyproject_toml(project_info)
-            subprocess.run(["poetry", "add", "--group",
-                           "dev", "pytest"], check=True)
+            dev_packages = ["pytest"] if project_info["create_tests"] else []
+            if project_info["use_pylint"]:
+                dev_packages.append("pylint")
+            if dev_packages:
+                subprocess.run(["poetry", "add", "--group",
+                            "dev"] + dev_packages, check=True)
         except subprocess.CalledProcessError as e:
             print(f"Poetry initialization failed : {e}")
 
@@ -150,6 +156,12 @@ class ProjectCreator:
 
     def _create_empty_requirements_txt(self) -> None:
         self.file_writer.write_file("requirements.txt", '')
+
+    def _create_linter_file(self, use_pylint: bool) -> None:
+        if not use_pylint:
+            return
+        content = self.file_generator.generate_pylint()
+        self.file_writer.write_file(".pylintrc", content)
 
     def _initialize_git_repository(self) -> None:
         git_dir = os.path.join(os.getcwd(), ".git")

@@ -41,6 +41,9 @@ class CLI:
         project_info["create_tests"] = self._yes_no_question(
             "Create a test folder? (y/n) [y]: ", "y"
         )
+        project_info["use_pylint"] = self._yes_no_question(
+            "Use pylint in project? (y/n) [n]: ", "n"
+        )
         self._display_summary(project_info)
         return project_info
 

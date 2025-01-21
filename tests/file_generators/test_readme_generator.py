@@ -25,6 +25,8 @@ def test_generate_readme_with_poetry_and_tests(readme_generator):
         "description": "A test project",
         "use_poetry": True,
         "create_tests": True,
+        "use_docker": False,
+        "use_pylint": True,
         "license": "MIT"
     }
 
@@ -46,6 +48,10 @@ poetry run python main.py
 ## Testing
 
 ```poetry run pytest```
+
+## Pylint
+
+```pylint .```
 
 ## Contributing
 
@@ -73,6 +79,8 @@ This project is licensed under the MIT License.
             "usage_instructions"])
     assert "testing_instructions" in kwargs and "poetry run pytest" in kwargs[
         "testing_instructions"]
+    assert "pylint_instructions" in kwargs and "```pylint .```" in kwargs[
+        "pylint_instructions"]
     assert "license_info" in kwargs and "MIT License" in kwargs["license_info"]
 
 
@@ -82,6 +90,8 @@ def test_generate_readme_without_poetry_and_tests(readme_generator):
         "description": "A test project",
         "use_poetry": False,
         "create_tests": False,
+        "use_docker": False,
+        "use_pylint": False,
         "license": "None"
     }
 

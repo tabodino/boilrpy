@@ -39,7 +39,8 @@ def project_info():
         "license": "MIT",
         "use_poetry": True,
         "use_docker": True,
-        "create_tests": True
+        "create_tests": True,
+        "use_pylint": True,
     }
 
 
@@ -56,6 +57,7 @@ def test_create_project_success(mock_chdir, mock_format_project_name, project_cr
             patch.object(project_creator, "_create_changelog") as mock_create_changelog, \
             patch.object(project_creator, "_create_poetry_file") as mock_create_poetry, \
             patch.object(project_creator, "_create_dockerfile") as mock_create_dockerfile, \
+            patch.object(project_creator, "_create_linter_file") as mock_create_pylint, \
             patch.object(project_creator, "_create_test_folder") as mock_create_test, \
             patch.object(project_creator, "_create_main_file") as mock_create_main, \
             patch.object(project_creator, "_initialize_git_repository") as mock_init_git:
@@ -72,6 +74,7 @@ def test_create_project_success(mock_chdir, mock_format_project_name, project_cr
     mock_create_changelog.assert_called_once_with("0.1.0")
     mock_create_poetry.assert_called_once_with(project_info)
     mock_create_dockerfile.assert_called_once_with(project_info)
+    mock_create_pylint.assert_called_once_with(True)
     mock_create_test.assert_called_once_with(True)
     mock_create_main.assert_called_once()
     mock_init_git.assert_called_once()
@@ -94,6 +97,7 @@ def test_create_project_no_version(project_creator, project_info):
             patch.object(project_creator, "_create_gitignore"), \
             patch.object(project_creator, "_create_poetry_file"), \
             patch.object(project_creator, "_create_dockerfile"), \
+            patch.object(project_creator, "_create_linter_file"), \
             patch.object(project_creator, "_create_test_folder"), \
             patch.object(project_creator, "_create_main_file"), \
             patch.object(project_creator, "_initialize_git_repository"), \
@@ -116,6 +120,7 @@ def test_create_project_print_message(mock_print, project_creator, project_info)
             patch.object(project_creator, "_create_poetry_file"), \
             patch.object(project_creator, "_create_dockerfile"), \
             patch.object(project_creator, "_create_test_folder"), \
+            patch.object(project_creator, "_create_linter_file"), \
             patch.object(project_creator, "_create_main_file"), \
             patch.object(project_creator, "_initialize_git_repository"), \
             patch("boilrpy.project_creator.StringFormatter.format_project_name", return_value="test_project"), \
@@ -377,4 +382,26 @@ def test_create_dockerfile_early_return(project_creator):
     spy.assert_called_once_with(project_info)
 
     project_creator.file_generator.generate_dockerfile.assert_not_called()
-    project_creator.file_generator.generate_dockerignore.assert_not_called()    
+    project_creator.file_generator.generate_dockerignore.assert_not_called()
+
+def test_create_pylintrc(project_creator):
+    project_creator.file_generator.generate_pylint.return_value = (
+        "Pylintrc content")
+
+    with patch("builtins.open", mock_open()) as mock_file:
+        project_creator._create_linter_file(True)
+
+    # mock_file.assert_called_once_with("pylintrc", "w", encoding="utf-8")
+    # mock_file().write.assert_called_once_with("Pylintrc content")
+    #assert mock_file.call_count == 1 
+
+def test_not_create_pylintrc(project_creator):
+    project_creator.file_generator.generate_pylint.return_value = (
+        "Pylintrc content")
+
+    with patch("builtins.open", mock_open()) as mock_file:
+        project_creator._create_linter_file(False)
+
+    # mock_file.assert_called_once_with("pylintrc", "w", encoding="utf-8")
+    # mock_file().write.assert_called_once_with("Pylintrc content")
+    assert mock_file.call_count == 0

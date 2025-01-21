@@ -5,6 +5,7 @@ boilrpy is a Python project automation tool that simplifies the process of creat
 
 [![PyPI version](https://badge.fury.io/py/boilrpy.svg)](https://badge.fury.io/py/boilrpy)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![Python](https://img.shields.io/badge/python->3.10-blue.svg)
 ![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen.svg)
 ## Installation
 

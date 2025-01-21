@@ -24,9 +24,10 @@ def test_gather_project_info(mock_config):
         "y",
         "y",
         "n",
+        "y",
     ]):
         project_info = cli.gather_project_info()
-
+    
     assert project_info["name"] == "TestProject"
     assert project_info["description"] == "A test project"
     assert project_info["version"] == "1.0.0"
@@ -34,6 +35,7 @@ def test_gather_project_info(mock_config):
     assert "license" in project_info
     assert project_info["use_poetry"] is True
     assert project_info["create_tests"] is False
+    assert project_info["use_pylint"] is True
 
 
 def test_get_valid_input(mock_config):
