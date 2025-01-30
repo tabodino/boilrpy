@@ -1,10 +1,10 @@
 import os
-import subprocess
-import toml
 from boilrpy.config import Config
 from boilrpy.file_generator import FileGenerator
 from boilrpy.file_writer import FileWriter
 from boilrpy.utils.string_formatter import StringFormatter
+from boilrpy.flask_app_creator import FlaskAppCreator
+from boilrpy.poetry_creator import PoetryCreator
 
 
 class ProjectCreator:
@@ -57,14 +57,15 @@ class ProjectCreator:
 
         self._create_test_folder(project_info["create_tests"])
 
-        self._create_main_file()
+        self._create_main_file(project_info["use_flask"])
 
-        self._create_empty_requirements_txt()
+        self._create_requirements_txt(project_info)
 
         self._create_linter_file(project_info["use_pylint"])
 
-        self._initialize_git_repository()
+        self._create_flask_app(project_info)
 
+        self._initialize_git_repository()
 
     def _create_project_directory(self) -> str:
         """
@@ -108,38 +109,14 @@ class ProjectCreator:
     def _create_poetry_file(self, project_info: dict) -> None:
         if not project_info["use_poetry"]:
             return
-        try:
-            subprocess.run(["poetry", "init", "-n"], check=True)
-            self._update_pyproject_toml(project_info)
-            dev_packages = ["pytest"] if project_info["create_tests"] else []
-            if project_info["use_pylint"]:
-                dev_packages.append("pylint")
-            if dev_packages:
-                subprocess.run(["poetry", "add", "--group",
-                            "dev"] + dev_packages, check=True)
-        except subprocess.CalledProcessError as e:
-            print(f"Poetry initialization failed : {e}")
-
-    def _update_pyproject_toml(self, project_info):
-        pyproject_file = "pyproject.toml"
-
-        with open(pyproject_file, "r", encoding=self.charset) as file:
-            pyproject_data = toml.load(file)
-
-        pyproject_data["tool"]["poetry"]["name"] = project_info["name"]
-        pyproject_data["tool"]["poetry"]["version"] = project_info["version"]
-        pyproject_data["tool"]["poetry"]["description"] =\
-            project_info["description"]
-        pyproject_data["tool"]["poetry"]["authors"] = [project_info["author"]]
-        pyproject_data["tool"]["poetry"]["license"] = project_info["license"]
-
-        with open(pyproject_file, "w", encoding=self.charset) as file:
-            toml.dump(pyproject_data, file)
+        poetry_creator = PoetryCreator(self.config)
+        poetry_creator.create_poetry_file(project_info)
 
     def _create_dockerfile(self, project_info: dict) -> None:
         if not project_info["use_docker"]:
             return
-        content = self.file_generator.generate_dockerfile(self.project_name)
+        content = self.file_generator.generate_dockerfile(
+            self.project_name, project_info["use_flask"])
         self.file_writer.write_file("Dockerfile", content)
         ignore_content = self.file_generator.generate_dockerignore()
         self.file_writer.write_file(".dockerignore", ignore_content)
@@ -150,18 +127,27 @@ class ProjectCreator:
         self.file_writer.create_directory("tests")
         self.file_writer.write_file("tests/__init__.py", "")
 
-    def _create_main_file(self) -> None:
+    def _create_main_file(self, use_flask: bool) -> None:
+        if use_flask:
+            return
         content = self.file_generator.generate_main_file()
         self.file_writer.write_file("main.py", content)
 
-    def _create_empty_requirements_txt(self) -> None:
-        self.file_writer.write_file("requirements.txt", '')
+    def _create_requirements_txt(self, project_info: dict) -> None:
+        content = self.file_generator.generate_requirements_txt(project_info)
+        self.file_writer.write_file("requirements.txt", content)
 
     def _create_linter_file(self, use_pylint: bool) -> None:
         if not use_pylint:
             return
         content = self.file_generator.generate_pylint()
         self.file_writer.write_file(".pylintrc", content)
+
+    def _create_flask_app(self, project_info: dict) -> None:
+        if not project_info["use_flask"]:
+            return
+        flask_creator = FlaskAppCreator(self.config)
+        flask_creator.create_flask_project(project_info)
 
     def _initialize_git_repository(self) -> None:
         git_dir = os.path.join(os.getcwd(), ".git")

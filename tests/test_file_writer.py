@@ -1,7 +1,6 @@
 import pytest
 from unittest.mock import mock_open, patch
 from boilrpy.file_writer import FileWriter, FileWriterError
-import os
 
 
 @pytest.fixture
@@ -41,8 +40,10 @@ def test_write_file_ioerror(mock_open, file_writer):
     mock_open.side_effect = IOError("Test error")
     with pytest.raises(FileWriterError) as excinfo:
         file_writer.write_file("test.txt", "content")
-    assert "Error writing to file test.txt: Error opening file test.txt: Test error" in str(
-        excinfo.value)
+    assert (
+        "Error writing to file test.txt: Error opening file test.txt: Test error"
+        in str(excinfo.value)
+    )
 
 
 @patch("os.makedirs")
@@ -60,7 +61,9 @@ def test_create_directory_success_exist_ok_false(mock_makedirs, file_writer):
 @patch("os.makedirs")
 def test_create_directory_oserror(mock_makedirs, file_writer):
     mock_makedirs.side_effect = OSError("Test error")
-    with pytest.raises(FileWriterError, match="Error creating directory test_dir: Test error"):
+    with pytest.raises(
+        FileWriterError, match="Error creating directory test_dir: Test error"
+    ):
         file_writer.create_directory("test_dir")
 
 

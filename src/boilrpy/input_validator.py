@@ -2,8 +2,7 @@ import re
 
 NAME_PATTERN = r"^[a-zA-Z0-9_\-\s]+$"
 VERSION_PATTERN = (
-    r"^\s*(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)"
-    r"(?:-(alpha|beta|rc))?\s*$"
+    r"^\s*(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)" + r"(?:-(alpha|beta|rc))?\s*$"
 )
 
 
@@ -11,6 +10,7 @@ class InputValidator:
     """
     Class for validating user input.
     """
+
     DEFAULT_VERSION = "0.1.0"
 
     @staticmethod
@@ -37,5 +37,4 @@ class InputValidator:
         Returns:
             bool: Whether the project version is valid.
         """
-        return True if version == "" else \
-            re.match(VERSION_PATTERN, version) is not None
+        return True if version == "" else re.match(VERSION_PATTERN, version) is not None

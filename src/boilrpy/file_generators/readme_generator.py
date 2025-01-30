@@ -26,6 +26,8 @@ ${setup_instructions}
 
 ## Usage
 
+To run the project, use the following comand:
+
 ${usage_instructions}
 
 ${testing_instructions}
@@ -44,26 +46,24 @@ ${pylint_instructions}
 ${license_info}
 """
         setup_instructions = (
-            "### Using Poetry\n\npoetry install"
+            "### Using Poetry\n\n```poetry install```"
             if project_info["use_poetry"]
             else "### Using pip and venv\n\npip install -r requirements.txt"
         )
         usage_instructions = (
-            "poetry run python main.py"
-            if project_info["use_poetry"]
-            else "python main.py"
+            "```flask run```"
+            if project_info.get("use_flask")
+            else "```poetry run python main.py```"
+            if project_info.get("use_poetry")
+            else "```python main.py```"
         )
         testing_instructions = (
             "\n## Testing\n\n```poetry run pytest```"
             if project_info["create_tests"] and project_info["use_poetry"]
-            else "\n## Testing\n\n```pytest```"
-            if project_info["create_tests"]
-            else ""
+            else "\n## Testing\n\n```pytest```" if project_info["create_tests"] else ""
         )
         pylint_instructions = (
-            "\n## Pylint\n\n```pylint .```"
-            if project_info["use_pylint"]
-            else ""
+            "\n## Pylint\n\n```pylint .```" if project_info["use_pylint"] else ""
         )
         license_info = (
             f"\n## License\n\nThis project is licensed under the {

@@ -27,7 +27,7 @@ def test_generate_readme_with_poetry_and_tests(readme_generator):
         "create_tests": True,
         "use_docker": False,
         "use_pylint": True,
-        "license": "MIT"
+        "license": "MIT",
     }
 
     mock_content = """
@@ -70,17 +70,22 @@ This project is licensed under the MIT License.
     readme_generator._render_template.assert_called_once()
     args, kwargs = readme_generator._render_template.call_args
     assert "name" in kwargs and kwargs["name"] == "Test Project"
-    assert "description" in kwargs and kwargs[
-        "description"] == "A test project"
-    assert "setup_instructions" in kwargs and "Using Poetry" in kwargs[
-        "setup_instructions"]
+    assert "description" in kwargs and kwargs["description"] == "A test project"
+    assert (
+        "setup_instructions" in kwargs
+        and "Using Poetry" in kwargs["setup_instructions"]
+    )
     assert "usage_instructions" in kwargs and (
-        "poetry run python main.py" in kwargs[
-            "usage_instructions"])
-    assert "testing_instructions" in kwargs and "poetry run pytest" in kwargs[
-        "testing_instructions"]
-    assert "pylint_instructions" in kwargs and "```pylint .```" in kwargs[
-        "pylint_instructions"]
+        "poetry run python main.py" in kwargs["usage_instructions"]
+    )
+    assert (
+        "testing_instructions" in kwargs
+        and "poetry run pytest" in kwargs["testing_instructions"]
+    )
+    assert (
+        "pylint_instructions" in kwargs
+        and "```pylint .```" in kwargs["pylint_instructions"]
+    )
     assert "license_info" in kwargs and "MIT License" in kwargs["license_info"]
 
 
@@ -92,7 +97,7 @@ def test_generate_readme_without_poetry_and_tests(readme_generator):
         "create_tests": False,
         "use_docker": False,
         "use_pylint": False,
-        "license": "None"
+        "license": "None",
     }
 
     mock_content = """
@@ -123,12 +128,14 @@ python main.py
     readme_generator._render_template.assert_called_once()
     args, kwargs = readme_generator._render_template.call_args
     assert "name" in kwargs and kwargs["name"] == "Test Project"
-    assert "description" in kwargs and kwargs[
-        "description"] == "A test project"
-    assert "setup_instructions" in kwargs and "Using pip and venv" in kwargs[
-        "setup_instructions"]
-    assert "usage_instructions" in kwargs and "python main.py" in kwargs[
-        "usage_instructions"]
-    assert "testing_instructions" in kwargs and kwargs[
-        "testing_instructions"] == ""
+    assert "description" in kwargs and kwargs["description"] == "A test project"
+    assert (
+        "setup_instructions" in kwargs
+        and "Using pip and venv" in kwargs["setup_instructions"]
+    )
+    assert (
+        "usage_instructions" in kwargs
+        and "python main.py" in kwargs["usage_instructions"]
+    )
+    assert "testing_instructions" in kwargs and kwargs["testing_instructions"] == ""
     assert "license_info" in kwargs and kwargs["license_info"] == ""

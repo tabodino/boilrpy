@@ -5,14 +5,15 @@ class StringFormatter:
     """
     A utility class for formatting strings.
     """
+
     @staticmethod
     def to_camel_case(string: str) -> str:
         """
         Convert a string to camelCase.
-        
+
         Args:
             string (str): The input string.
-        
+
         Returns:
             str: The string in camelCase format.
         """
@@ -21,18 +22,16 @@ class StringFormatter:
         if re.match(r"^[A-Z][a-zA-Z0-9]*$", string):
             return string[0].lower() + string[1:]
         words = re.findall(r"[A-Za-z0-9]+", string)
-        return words[0].lower() + ''.join(
-            word.capitalize() for word in words[1:]
-        )
+        return words[0].lower() + "".join(word.capitalize() for word in words[1:])
 
     @staticmethod
     def to_snake_case(string: str) -> str:
         """
         Convert a string to snake_case.
-        
+
         Args:
             string (str): The input string.
-        
+
         Returns:
             str: The string in snake_case format.
         """
@@ -44,15 +43,14 @@ class StringFormatter:
         return re.sub("[^a-z0-9]+", "_", s2.lower())
 
     @staticmethod
-    def format_project_name(project_name: str,
-                            use_camel_case: bool) -> str:
+    def format_project_name(project_name: str, use_camel_case: bool) -> str:
         """
         Format a project name to either camelCase or snake_case.
-        
+
         Args:
             project_name (str): The input project name.
             use_camel_case (bool): Whether to use camelCase or snake_case.
-        
+
         Returns:
             str: The formatted project name.
         """

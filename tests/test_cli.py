@@ -1,3 +1,5 @@
+import signal
+import sys, os, time
 from colorama import Fore, Style
 from boilrpy.input_validator import InputValidator
 import pytest
@@ -13,49 +15,61 @@ def mock_config():
     return mock
 
 
+@pytest.fixture
+def cli():
+    return CLI(Config())
+
+
 def test_gather_project_info(mock_config):
     cli = CLI(mock_config)
-    with patch("builtins.input", side_effect=[
-        "TestProject",
-        "A test project",
-        "1.0.0",
-        "John Doe",
-        "1",
-        "y",
-        "y",
-        "n",
-        "y",
-    ]):
+    with patch(
+        "builtins.input",
+        side_effect=[
+            "TestProject",  # project name
+            "A test project",  # description
+            "1.0.0",  # version
+            "John Doe",  # author
+            "1",  # license
+            "y",  # use poetry
+            "y",  # use docker
+            "y",  # create tests
+            "y",  # use pylint
+            "y",  # use flask
+        ],
+    ):
         project_info = cli.gather_project_info()
-    
+
     assert project_info["name"] == "TestProject"
     assert project_info["description"] == "A test project"
     assert project_info["version"] == "1.0.0"
     assert project_info["author"] == "John Doe"
     assert "license" in project_info
     assert project_info["use_poetry"] is True
-    assert project_info["create_tests"] is False
+    assert project_info["use_docker"] is True
+    assert project_info["create_tests"] is True
     assert project_info["use_pylint"] is True
+    assert project_info["use_flask"] is True
 
 
 def test_get_valid_input(mock_config):
     cli = CLI(mock_config)
     with patch("builtins.input", return_value="TestProject"):
-        assert cli._get_valid_input(
-            "Enter project name: ",
-            InputValidator.validate_project_name
-        ) == "TestProject"
+        assert (
+            cli._get_valid_input(
+                "Enter project name: ", InputValidator.validate_project_name
+            )
+            == "TestProject"
+        )
 
     with patch("builtins.input", side_effect=["", "test"]) as mocked_input:
         result = cli._get_valid_input(
-            "Enter project name: ",
-            InputValidator.validate_project_name
+            "Enter project name: ", InputValidator.validate_project_name
         )
         assert result == "test"
         assert mocked_input.call_count == 2
         assert mocked_input.call_args_list == [
             call("Enter project name: "),
-            call("Enter project name: ")
+            call("Enter project name: "),
         ]
 
 
@@ -69,12 +83,10 @@ def test_yes_no_question(mock_config):
         assert cli._yes_no_question("Test question?") is False
 
     with patch("builtins.input", return_value=""):
-        assert cli._yes_no_question(
-            "Test question with default?", "n") is False
+        assert cli._yes_no_question("Test question with default?", "n") is False
 
     with patch("builtins.input", return_value=""):
-        assert cli._yes_no_question(
-            "Test question with default?", "y") is True
+        assert cli._yes_no_question("Test question with default?", "y") is True
 
     with patch("builtins.input", side_effect=["", "y"]) as mocked_input:
         result = cli._yes_no_question("Test question with default?")
@@ -82,7 +94,7 @@ def test_yes_no_question(mock_config):
         assert mocked_input.call_count == 2
         assert mocked_input.call_args_list == [
             call("Test question with default? (y/n): "),
-            call("Test question with default? (y/n): ")
+            call("Test question with default? (y/n): "),
         ]
 
 
@@ -97,24 +109,26 @@ def test_choose_license(mock_config):
         assert mocked_input.call_count == 2
         assert mocked_input.call_args_list == [
             call("Choose a license (enter the number): "),
-            call("Choose a license (enter the number): ")
+            call("Choose a license (enter the number): "),
         ]
+
 
 def mock_input(prompt):
     return prompt
 
+
 def test_get_valid_input(capsys, mock_config):
     cli = CLI(mock_config)
     with patch.object(cli, "_get_valid_input", return_value="Mocked input"):
-        prompt = "Please enter something:" 
+        prompt = "Please enter something:"
         result = cli._get_valid_input("Please enter something:")
-        expected_prompt = f"{Fore.GREEN}{prompt}{Style.RESET_ALL}" 
+        expected_prompt = f"{Fore.GREEN}{prompt}{Style.RESET_ALL}"
         assert result == "Mocked input"
-    
-    with patch('builtins.input', side_effect=['', 'test input']):
+
+    with patch("builtins.input", side_effect=["", "test input"]):
         result = cli._get_valid_input(prompt, InputValidator.validate_project_name)
-    
-    assert result == 'test input'    
+
+    assert result == "test input"
 
 
 @patch("builtins.input")
@@ -133,21 +147,29 @@ def test_get_valid_input_empty_prompt(mock_input, mock_config):
     assert len(call_args) == 0
     assert result == expected_input
 
+
 @patch("builtins.input")
 def test_get_valid_input_original(mock_input, mock_config):
     cli = CLI(mock_config)
     prompt = "Enter something: "
     mock_input.return_value = "test input"
     result = cli._get_valid_input(prompt, InputValidator.validate_project_name)
-    
+
     expected_prompt = f"{Fore.GREEN}Enter something: {Fore.RESET}"
     prompt == expected_prompt
     assert result == mock_input.return_value
 
-@patch("builtins.input", side_effect=KeyboardInterrupt)
-def test_get_valid_input_keyboard_interrupt(mock_input, mock_config):
-    prompt = "Project name: "
-    cli = CLI(mock_config)
-    with pytest.raises(KeyboardInterrupt):
-        cli._get_valid_input(prompt, InputValidator.validate_project_name)
 
+def test_keyboard_interrupt_block(mock_config):
+    with patch("builtins.print") as mock_print, patch.object(
+        sys, "exit"
+    ) as mock_exit, patch("builtins.input", side_effect=KeyboardInterrupt):
+
+        cli = CLI(mock_config)
+        cli.gather_project_info()
+
+        mock_print.assert_any_call(
+            f"\n{Fore.MAGENTA}Operation cancelled by user.{Style.RESET_ALL}"
+        )
+        mock_exit.assert_called_once_with(0)
+        mock_exit.side_effect = SystemExit

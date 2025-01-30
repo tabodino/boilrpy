@@ -68,21 +68,60 @@ Follow the prompts to configure your project. You'll be asked for:
 
 boilrpy generates the following project structure:
 
+### Without flask
+
 ```
 your_project/
+├── Dockerfile     (if using Docker)
+├── .dockerignore  (if using Docker)
+├── .pylintrc      (if using pylint)
 ├── .gitignore
 ├── LICENSE
 ├── README.md
-├── Dockerfile (if using Docker)
-├── .dockerignore (if using Docker)
+├── CHANGELOG.md
 ├── pyproject.toml (if using Poetry)
-├── requirements.txt (if using pip)
-├── src/
-│   └── your_project/
-│       └── __init__.py
+├── poetry.lock    (if using Poetry)
+├── requirements.txt
+├── main.py        (project entrypoint)
 └── tests/
     └── __init__.py
 ```
+
+### With flask
+
+```
+your_project/
+├── Dockerfile     (if using Docker)
+├── .dockerignore  (if using Docker)
+├── .pylintrc      (if using pylint)
+├── .gitignore
+├── .env
+├── LICENSE
+├── README.md
+├── CHANGELOG.md
+├── pyproject.toml (if using Poetry)
+├── poetry.lock    (if using Poetry)
+├── requirements.txt
+├── app.py         (flask entrypoint)
+├── static/        (assets folder)
+│   └── css/
+│   |   └── style.css
+│   └── js/
+│       └── script.js
+├── templates/     (html files)
+│   └── base.html
+|   └── index.html
+└── tests/
+    └── __init__.py
+```
+
+Run this command to launch server:
+```
+flask run
+```
+By default your flask app is accessible at this address: http://127.0.0.1:5000 (see app.py)
+
+This configuration is for development
 
 ## Configuration
 

@@ -7,6 +7,8 @@ from boilrpy.file_generators.license_generator import LicenseGenerator
 from boilrpy.file_generators.main_file_generator import MainFileGenerator
 from boilrpy.file_generators.readme_generator import ReadmeGenerator
 from boilrpy.file_generators.pylint_generator import PylintGenerator
+from boilrpy.file_generators.flask_generator import FlaskGenerator
+from boilrpy.file_generators.requirements_generator import RequirementsGenerator
 from boilrpy.config import Config
 
 
@@ -14,15 +16,17 @@ class Generator(ABC):
     """
     Abstract class for generating project files.
     """
+
     @abstractmethod
     def generate(self, *args, **kwargs) -> str:
-        """ Generate the content of the file. """
+        """Generate the content of the file."""
 
 
 class GeneratorFactory:
     """
     Factory class for creating generators.
     """
+
     _generators: Dict[str, Type[Generator]] = {
         "readme": ReadmeGenerator,
         "license": LicenseGenerator,
@@ -31,6 +35,8 @@ class GeneratorFactory:
         "main_file": MainFileGenerator,
         "dockerfile": DockerfileGenerator,
         "pylint": PylintGenerator,
+        "flask": FlaskGenerator,
+        "requirements": RequirementsGenerator,
     }
 
     @classmethod
@@ -65,8 +71,9 @@ class FileGenerator:
 
     def _get_generator(self, generator_type: str) -> Generator:
         if generator_type not in self.generators:
-            self.generators[generator_type] = \
-                GeneratorFactory.create_generator(generator_type, self.config)
+            self.generators[generator_type] = GeneratorFactory.create_generator(
+                generator_type, self.config
+            )
         return self.generators[generator_type]
 
     def generate_readme(self, project_info: dict) -> str:
@@ -113,13 +120,15 @@ class FileGenerator:
         """
         return self._get_generator("main_file").generate()
 
-    def generate_dockerfile(self, project_name: str) -> str:
+    def generate_dockerfile(self, project_name: str, use_flask: bool) -> str:
         """
         Generate Dockerfile content.
 
         :return: Content of Dockerfile
         """
-        return self._get_generator("dockerfile").generate_dockerfile(project_name)
+        return self._get_generator("dockerfile").generate_dockerfile(
+            project_name, use_flask
+        )
 
     def generate_dockerignore(self) -> str:
         """
@@ -136,3 +145,59 @@ class FileGenerator:
         :return: Content of .pylintrc
         """
         return self._get_generator("pylint").generate()
+
+    def generate_requirements_txt(self, project_info: dict) -> str:
+        """
+        Generate requirements.txt content.
+
+        :return: Content of requirements.txt
+        """
+        return self._get_generator("requirements").generate(project_info)
+
+    def generate_flask_app_file(self) -> str:
+        """
+        Generate flask app file content.
+
+        :return: Content of flask app file
+        """
+        return self._get_generator("flask").generate_app_file()
+
+    def generate_base_template(self, project_info: dict) -> str:
+        """
+        Generate base template content.
+
+        :return: Content of base template
+        """
+        return self._get_generator("flask").generate_base_template(project_info)
+
+    def generate_index_template(self, project_info: dict) -> str:
+        """
+        Generate index template content.
+
+        :return: Content of index template
+        """
+        return self._get_generator("flask").generate_index_template(project_info)
+
+    def generate_dot_env_file(self) -> str:
+        """
+        Generate .env file content.
+
+        :return: Content of .env file
+        """
+        return self._get_generator("flask").generate_dot_env_file()
+
+    def generate_style_file(self) -> str:
+        """
+        Generate style file content.
+
+        :return: Content of style file
+        """
+        return self._get_generator("flask").generate_style_file()
+
+    def generate_script_file(self) -> str:
+        """
+        Generate script file content.
+
+        :return: Content of script file
+        """
+        return self._get_generator("flask").generate_script_file()

@@ -10,6 +10,7 @@ class FileWriterError(Exception):
 
 class FileWriter:
     """Class to write files and directories."""
+
     def __init__(self, charset: str = Config().get_charset()) -> None:
         self.charset = charset
 
@@ -52,7 +53,7 @@ class FileWriter:
 
         Args:
             directory (str): The name of the directory to create.
-            exist_ok (bool, optional): Whether to raise an exception 
+            exist_ok (bool, optional): Whether to raise an exception
             if the directory already exists. Defaults to True.
         """
         try:

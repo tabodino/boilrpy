@@ -8,11 +8,13 @@ class DockerfileGenerator(BaseGenerator):
 
     def generate(self, *args, **kwargs) -> None:
         project_name = args[0] if args else ""
-        self.generate_dockerfile(project_name)
+        use_flask = args[1] if len(args) > 1 else False
+        self.generate_dockerfile(project_name, use_flask)
         self.generate_dockerignore()
 
-    def generate_dockerfile(self, project_name: str) -> str:
-        """ Generate Dockerfile content. """
+    def generate_dockerfile(self, project_name: str, use_flask: bool) -> str:
+        """Generate Dockerfile content."""
+        command = '["flask", "run"]' if use_flask else '["python", "main.py"]'
         template = """FROM python:${python_version}-slim
 
 WORKDIR /app
@@ -22,16 +24,17 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD ["python", "main.py"]
+CMD ${command}
 """
         return self.render_template(
             template,
             project_name=project_name,
             python_version=self.config.python_version,
+            command=command,
         )
 
     def generate_dockerignore(self) -> str:
-        """ Generate .dockerignore content. """
+        """Generate .dockerignore content."""
         return """__pycache__
 *.pyc
 *.pyo

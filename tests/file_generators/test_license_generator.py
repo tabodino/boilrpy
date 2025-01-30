@@ -75,7 +75,8 @@ def test_gpl_license_strategy():
     assert f"Copyright {datetime.now().year} John Doe" in license_text
     assert "GNU General Public License" in license_text
 
+
 def test_gpl_license_strategy():
     strategy = BSDLicenseStrategy()
     license_text = strategy.generate("John Doe")
-    assert "BSD License" in license_text    
+    assert "BSD License" in license_text

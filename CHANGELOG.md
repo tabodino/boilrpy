@@ -1,29 +1,34 @@
 # Changelog
 
-## [0.5.0] - 2024-01-21
+## [0.6.0] - 2025-01-28
+### Added
+- Add flask generation templates and structure
+- Separate poetry generation in a dedicated concern
+
+## [0.5.0] - 2025-01-21
 ### Added
 - Add pylint generation file
 - Upate file generator script with Factory pattern
 
-## [0.4.0] - 2024-01-19
+## [0.4.0] - 2025-01-19
 ### Added
 - Add color in CLI
 
-## [0.3.2] - 2024-01-17
+## [0.3.2] - 2025-01-17
 ### Fixed
 - Remove debug print method 
 
-## [0.3.1] - 2024-01-17
+## [0.3.1] - 2025-01-17
 ### Fixed
 - Fix path on generate Dockerfile
 
-## [0.3.0] - 2024-01-13
+## [0.3.0] - 2025-01-13
 ### Added
 - Handle BSD license
 - Generate docker files
 - Update README.md
 
-## [0.2.0] - 2024-01-06
+## [0.2.0] - 2025-01-06
 ### Added
 - Separate file writer concerns
 - Add a config default version
