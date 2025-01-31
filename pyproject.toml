@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "boilrpy"
-version = "0.6.2"
+version = "0.7.0-beta"
 description = "A python development boilerplate generator"
 authors = ["Jean-Michel LIEVIN <jeanmichel.liev1@gmail.com>"]
 license = "MIT"
