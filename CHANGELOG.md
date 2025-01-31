@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.6.2] - 2025-01-31
+### Fixed
+- Handle new major version of poetry pyproject.toml
+- Handle no git installed on OS
+- Handle no poetry package found
+
+## [0.6.1] - 2025-01-30
+### Fixed
+- Error autoformat string with black
+
 ## [0.6.0] - 2025-01-28
 ### Added
 - Add flask generation templates and structure

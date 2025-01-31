@@ -9,6 +9,7 @@ class PoetryCreator:
         self.config = config
         self.charset = self.config.get_charset()
 
+
     def create_poetry_file(self, project_info: dict) -> None:
         """Create a new poetry file.
 
@@ -27,8 +28,11 @@ class PoetryCreator:
                 )
             if packages:
                 subprocess.run(["poetry", "add"] + packages, check=True)
+        except FileNotFoundError:
+            print("Poetry not found. Please install Poetry and try again.")
         except subprocess.CalledProcessError as e:
-            print(f"Poetry initialization failed : {e}")
+            print(f"Poetry initialization failed: {e}")
+
 
     def _update_pyproject_toml(self, project_info):
         pyproject_file = "pyproject.toml"
@@ -36,11 +40,22 @@ class PoetryCreator:
         with open(pyproject_file, "r", encoding=self.charset) as file:
             pyproject_data = toml.load(file)
 
-        pyproject_data["tool"]["poetry"]["name"] = project_info["name"]
-        pyproject_data["tool"]["poetry"]["version"] = project_info["version"]
-        pyproject_data["tool"]["poetry"]["description"] = project_info["description"]
-        pyproject_data["tool"]["poetry"]["authors"] = [project_info["author"]]
-        pyproject_data["tool"]["poetry"]["license"] = project_info["license"]
+        poetry_version = self._check_poetry_version()
+
+        if poetry_version.startswith("1."):
+            pyproject_data["tool"]["poetry"]["name"] = project_info["name"]
+            pyproject_data["tool"]["poetry"]["version"] = project_info["version"]
+            pyproject_data["tool"]["poetry"]["description"] = project_info["description"]
+            pyproject_data["tool"]["poetry"]["authors"] = [project_info["author"]]
+            pyproject_data["tool"]["poetry"]["license"] = project_info["license"]
+
+        if poetry_version.startswith("2."):
+            pyproject_data["project"]["name"] = project_info["name"]
+            pyproject_data["project"]["version"] = project_info["version"]
+            pyproject_data["project"]["description"] = project_info["description"]
+            if project_info["author"]:
+                pyproject_data["project"]["authors"] = [{"name": project_info["author"]}]
+            pyproject_data["project"]["license"] = {"text": project_info["license"]}
 
         with open(pyproject_file, "w", encoding=self.charset) as file:
             toml.dump(pyproject_data, file)
@@ -56,3 +71,21 @@ class PoetryCreator:
             packages.append("python-dotenv")
 
         return packages, dev_packages
+
+    def _check_poetry_version(self):
+        result = subprocess.run(
+                ["poetry", "--version"],
+                capture_output=True,
+                text=True,
+                check=True,
+        )
+        version_output = result.stdout.strip()
+        return version_output.split()[-1]
+
+
+class PoetryNotFoundError(Exception):
+    """Exception raised when Poetry is not found."""
+
+
+class PoetryVersionError(Exception):
+    """Exception raised when Poetry version is incorrect."""

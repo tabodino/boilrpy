@@ -66,8 +66,8 @@ ${license_info}
             "\n## Pylint\n\n```pylint .```" if project_info["use_pylint"] else ""
         )
         license_info = (
-            f"\n## License\n\nThis project is licensed under the {
-                project_info["license"]} License."
+            f"\n## License\n\nThis project is licensed under the "
+            f"{project_info['license']} License."
             if project_info["license"] != "None"
             else ""
         )

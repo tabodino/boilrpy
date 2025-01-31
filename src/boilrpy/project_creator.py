@@ -1,4 +1,6 @@
 import os
+import subprocess
+from colorama import Fore, Style
 from boilrpy.config import Config
 from boilrpy.file_generator import FileGenerator
 from boilrpy.file_writer import FileWriter
@@ -32,6 +34,7 @@ class ProjectCreator:
             project_info["name"],
             self.config.use_camel_case)
 
+        project_info["name"] = self.project_name
         project_info["version"] = project_info.get(
             "version") or "0.1.0"
 
@@ -150,10 +153,21 @@ class ProjectCreator:
         flask_creator.create_flask_project(project_info)
 
     def _initialize_git_repository(self) -> None:
-        git_dir = os.path.join(os.getcwd(), ".git")
-        self.file_writer.create_directory(git_dir)
-        os.chmod(git_dir, 0o775)
-        os.system("git init")
+        try:
+            subprocess.run(["git", "--version"], check=True, capture_output=True)
+            subprocess.run(["git", "init"], check=True)
+        except FileNotFoundError:
+            print(f"{Fore.YELLOW}Git not found on your system. "
+                  f"Skipping Git initialization.{Style.RESET_ALL}"
+            )
+            print(f"{Fore.YELLOW}To use Git with this project, please install Git "
+                  f"and run 'git init' manually in the project directory.{Style.RESET_ALL}"
+            )
+        except subprocess.CalledProcessError as e:
+            print(f"{Fore.RED}Error initializing Git repository: "
+                  f"{e}{Style.RESET_ALL}")
+            print(f"{Fore.YELLOW}You may need to initialize the Git repository manually."
+                  f"{Style.RESET_ALL}")
 
     def _check_directory_exist(self, directory: str) -> bool:
         return os.path.exists(directory) and os.path.isdir(directory)

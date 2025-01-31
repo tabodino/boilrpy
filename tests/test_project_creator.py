@@ -349,11 +349,9 @@ def test_create_flask_app_when_using_flask(project_creator):
 def test_initialize_git_repository(mock_os, project_creator):
     mock_os.getcwd.return_value = "/test"
     mock_os.path.join.return_value = "/test/.git"
-
-    project_creator._initialize_git_repository()
-    mock_os.chmod.assert_called_once_with("/test/.git", 0o775)
-    mock_os.system.assert_called_once_with("git init")
-
+    with patch("subprocess.run") as mock_run:
+        project_creator._initialize_git_repository()
+        assert mock_run.call_count == 2
 
 def test_create_project_directory(project_creator):
     project_creator.project_name = "test_project"
