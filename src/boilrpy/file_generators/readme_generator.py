@@ -48,7 +48,19 @@ ${license_info}
         setup_instructions = (
             "### Using Poetry\n\n```poetry install```"
             if project_info["use_poetry"]
-            else "### Using pip and venv\n\npip install -r requirements.txt"
+            else ("### Using pip and venv\n\n"
+                  "Create a virtual environment:\n\n"
+                  "On Linux and macOS:\n\n"
+                  "```python3 -m venv venv```"
+                  "\n\nOn Windows:\n\n"
+                  "```python -m venv venv```"
+                  "\n\nActivate the virtual environment:\n\n"
+                  "On Linux and macOS:\n\n"
+                  "```source venv/bin/activate```"
+                  "\n\nOn Windows:\n\n"
+                  "```venv/Scripts/activate```"
+                  "\n\nInstall dependencies:\n\n"
+                  "```pip install -r requirements.txt```")
         )
         usage_instructions = (
             "```flask run```"

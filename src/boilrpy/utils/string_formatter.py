@@ -36,7 +36,7 @@ class StringFormatter:
             str: The string in snake_case format.
         """
         string = string.strip()
-        if re.match(r"^[a-z0-9_]+$", string):
+        if re.match(r"^[a-z0-9_-]+$", string):
             return string
         s1 = re.sub("(.)([A-Z][a-z]+)", r"\1_\2", string)
         s2 = re.sub("([a-z0-9])([A-Z])", r"\1_\2", s1)

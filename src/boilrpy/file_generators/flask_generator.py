@@ -90,8 +90,8 @@ if __name__ == '__main__':
 """
         return self.render_template(
             template,
-            project_name=project_info["name"].title(),
-            description=project_info["description"],
+            project_name=project_info["name"].capitalize(),
+            description=project_info["description"].capitalize(),
         )
 
     def generate_dot_env_file(self) -> str:

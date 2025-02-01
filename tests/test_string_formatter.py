@@ -98,7 +98,7 @@ class TestStringFormatter:
             # snake_case
             ("test_project", False, "test_project"),
             ("TestProject", False, "test_project"),
-            ("test-project", False, "test_project"),
+            ("test-project", False, "test-project"),
             ("TEST_PROJECT", False, "test_project"),
             ("CamelCase", False, "camel_case"),
             # Edge cases

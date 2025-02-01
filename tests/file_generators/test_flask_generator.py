@@ -51,12 +51,12 @@ def test_generate_base_template(flask_generator):
 
 
 def test_generate_index_template(flask_generator):
-    project_info = {"name": "Test Project", "description": "A test Flask project"}
+    project_info = {"name": "Test Project", "description": "A test flask project"}
     index_template_content = flask_generator.generate_index_template(project_info)
     assert '{% extends "base.html" %}' in index_template_content
     assert "{% block content %}" in index_template_content
-    assert "<h1>Welcome to Test Project</h1>" in index_template_content
-    assert "<p>A test Flask project</p>" in index_template_content
+    assert "<h1>Welcome to Test project</h1>" in index_template_content
+    assert "<p>A test flask project</p>" in index_template_content
     assert "{% endblock %}" in index_template_content
 
 

@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.7.0-beta1] - 2025-02-01
+
+### ✨ Added
+- Add virtual environment instructions on readme text generator 
+
+### 🔄 Changes
+- Improve project snake case name formatting regex
+- Replace capitalize text in flask templates
+
 ## [0.7.0-beta] - 2025-01-31
 
 ### 🔄 Changes 
