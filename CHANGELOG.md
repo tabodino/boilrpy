@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.7.0] - 2025-02-01
+
+### 🚀 Stable release
+- Version 0.7.0-beta1 promoted to 0.7.0 with no functional changes.
+- Removed -beta1 suffix for official release via pip install boilrpy.
+
 ## [0.7.0-beta1] - 2025-02-01
 
 ### ✨ Added
