@@ -85,7 +85,7 @@ your_project/
 
 <details>
 <summary><b>Flask project</b></summary>
-```bash
+```
 your_project/
 ├── Dockerfile (if requested)
 ├── .dockerignore (if requested)
