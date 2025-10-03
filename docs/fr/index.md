@@ -6,7 +6,7 @@ _A Python development boilerplate generator_
 [![GitHub stars](https://img.shields.io/github/stars/tabodino/boilrpy?style=social)](https://github.com/tabodino/boilrpy)
 
 > 🇫🇷 Cette page est en français.  
-> 🇬🇧 For the English version, click here: [English](/index.md)
+> 🇬🇧 For the English version, click here: [English](../index.md)
 
 ---
 
