@@ -85,6 +85,7 @@ your_project/
 
 <details>
 <summary><b>Flask project</b></summary>
+  
 ```
 your_project/
 ├── Dockerfile (if requested)
