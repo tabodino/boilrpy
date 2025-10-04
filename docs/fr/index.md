@@ -56,10 +56,10 @@ boilrpy
 from boilrpy import create_project
 
 create_project(
-name="my_awesome_project",
-version="0.1.0",
-license="MIT",
-use_poetry=True
+  name="my_awesome_project",
+  version="0.1.0",
+  license="MIT",
+  use_poetry=True
 )
 ```
 
@@ -71,7 +71,7 @@ use_poetry=True
 <details>
 <summary><b>Projet Python classique</b></summary>
 
-```
+<pre>
 your_project/
 ├── Dockerfile (si demandé)
 ├── .dockerignore (si demandé)
@@ -82,14 +82,14 @@ your_project/
 ├── main.py
 └── tests/
 └── init.py
-```
+</pre>
 
 </details>
 
 <details>
 <summary><b>Projet Flask</b></summary>
 
-```
+<pre>
 your_project/
 ├── Dockerfile (si demandé)
 ├── .dockerignore (si demandé)
@@ -107,7 +107,7 @@ your_project/
 │ └── index.html
 └── tests/
 └── init.py
-```
+</pre>
 
 </details>
 
