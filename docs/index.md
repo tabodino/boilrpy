@@ -68,8 +68,7 @@ create_project(
 <details>
 <summary><b>Classic Python project</b></summary>
 
-```
-
+```text
 your_project/
 ├── Dockerfile (if requested)
 ├── .dockerignore (if requested)
@@ -86,8 +85,8 @@ your_project/
 
 <details>
 <summary><b>Flask project</b></summary>
-  
-```
+
+```text
 your_project/
 ├── Dockerfile (if requested)
 ├── .dockerignore (if requested)
@@ -107,6 +106,7 @@ your_project/
 └── init.py
 
 ```
+
 </details>
 
 ---
