@@ -54,10 +54,10 @@ boilrpy
 from boilrpy import create_project
 
 create_project(
-name="my_awesome_project",
-version="0.1.0",
-license="MIT",
-use_poetry=True
+  name="my_awesome_project",
+  version="0.1.0",
+  license="MIT",
+  use_poetry=True
 )
 ```
 
@@ -69,6 +69,7 @@ use_poetry=True
 <summary><b>Classic Python project</b></summary>
 
 ```
+
 your_project/
 ├── Dockerfile (if requested)
 ├── .dockerignore (if requested)
@@ -104,6 +105,7 @@ your_project/
 │ └── index.html
 └── tests/
 └── init.py
+
 ```
 </details>
 
