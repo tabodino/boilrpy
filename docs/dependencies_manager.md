@@ -20,12 +20,12 @@ Boilrpy supports multiple Python dependency managers. This guide will help you c
 - ❌ Manual dependency resolution
 
 **Usage**:
-\`\`\`bash
+```bash
 python -m venv venv
 source venv/bin/activate  # Linux/macOS
 venv\Scripts\activate     # Windows
 pip install -r requirements.txt
-\`\`\`
+```
 
 ---
 
@@ -33,7 +33,7 @@ pip install -r requirements.txt
 **Best for**: Professional projects, teams, package publishing
 
 **Installation**:
-\`\`\`bash
+```bash
 # Windows (PowerShell)
 (Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | py -
 
@@ -42,7 +42,7 @@ curl -sSL https://install.python-poetry.org | python3 -
 
 # Alternative: using pipx
 pipx install poetry
-\`\`\`
+```
 
 **Pros**:
 - ✅ Automatic virtual environment management
@@ -56,11 +56,11 @@ pipx install poetry
 - ❌ Additional installation required
 
 **Usage**:
-\`\`\`bash
+```bash
 poetry install
-poetry shell
+poetry env activate
 poetry run python main.py
-\`\`\`
+```
 
 ---
 
@@ -68,7 +68,7 @@ poetry run python main.py
 **Best for**: Modern projects, speed-focused workflows, developers who want fast installs
 
 **Installation**:
-\`\`\`bash
+```bash
 # Using pip
 pip install uv
 
@@ -83,7 +83,7 @@ powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
 
 # Linux/macOS (curl)
 curl -LsSf https://astral.sh/uv/install.sh | sh
-\`\`\`
+```
 
 **Pros**:
 - ✅ **Extremely fast** (10-100x faster than pip)
@@ -96,12 +96,12 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 - ❌ Requires separate installation
 
 **Usage**:
-\`\`\`bash
+```bash
 uv venv
 source .venv/bin/activate  # Linux/macOS
 .venv\Scripts\activate     # Windows
 uv pip install -r requirements.txt
-\`\`\`
+```
 
 ---
 
@@ -125,10 +125,10 @@ Download Anaconda or Miniconda from:
 - ❌ Can conflict with system Python
 
 **Usage**:
-\`\`\`bash
+```bash
 conda env create -f environment.yml
 conda activate myproject
-\`\`\`
+```
 
 ---
 
@@ -150,24 +150,24 @@ conda activate myproject
 After installing a dependency manager, verify it's working:
 
 ### pip
-\`\`\`bash
+```bash
 pip --version
-\`\`\`
+```
 
 ### Poetry
-\`\`\`bash
+```bash
 poetry --version
-\`\`\`
+```
 
 ### uv
-\`\`\`bash
+```bash
 uv --version
-\`\`\`
+```
 
 ### Conda
-\`\`\`bash
+```bash
 conda --version
-\`\`\`
+```
 
 ---
 
@@ -194,10 +194,10 @@ conda --version
 ### Permission errors
 
 **Linux/macOS**:
-\`\`\`bash
+```bash
 # Use --user flag or virtual environment
 pip install --user uv
-\`\`\`
+```
 
 **Windows**:
 - Run terminal as Administrator (not recommended)
@@ -210,22 +210,22 @@ pip install --user uv
 You can convert between dependency managers:
 
 ### From pip to Poetry
-\`\`\`bash
+```bash
 poetry init
 # Answer the prompts, then:
 poetry add $(cat requirements.txt | grep -v '^#' | grep -v '^$')
-\`\`\`
+```
 
 ### From Poetry to pip
-\`\`\`bash
+```bash
 poetry export -f requirements.txt --output requirements.txt --without-hashes
-\`\`\`
+```
 
 ### From pip to uv
-\`\`\`bash
+```bash
 # uv is compatible with pip, just use uv instead
 uv pip install -r requirements.txt
-\`\`\`
+```
 
 ---
 
