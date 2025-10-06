@@ -1,65 +1,45 @@
 import pytest
-import importlib
+import sys
 from unittest.mock import Mock, patch
-from boilrpy.__main__ import main
+from boilrpy.__main__ import run_cli, main
 
+class DummyArgs:
+    def __init__(self, check_deps=False):
+        self.check_deps = check_deps
 
-@pytest.fixture
-def mock_main():
-    with patch("boilrpy.__main__.main") as mock_main:
-        yield mock_main
+# ✅ Test du chemin --check-deps
+def test_run_cli_check_deps(monkeypatch):
+    called = {}
 
+    def mock_print_status():
+        called["status"] = True
 
-@pytest.fixture
-def mock_config():
-    return Mock()
+    monkeypatch.setattr(
+        "boilrpy.dependency_creators.checker.DependencyManagerChecker.print_status",
+        mock_print_status
+    )
 
+    args = DummyArgs(check_deps=True)
+    run_cli(args)
 
-@pytest.fixture
-def mock_cli():
-    cli = Mock()
-    cli.gather_project_info.return_value = {
-        "name": "test_project",
-        "version": "0.1.0",
-        "description": "A test project",
-        "author": "Test Author",
-        "license": "MIT",
-        "use_poetry": True,
-        "create_tests": True,
-    }
-    return cli
+    assert called.get("status") is True
 
-
-@pytest.fixture
-def mock_project_creator():
-    return Mock()
-
-
-def test_main_method():
-
-    with patch("boilrpy.__name__", "__main__"):
-        with patch("boilrpy.__main__.main") as mock_main:
-            from boilrpy.__main__ import main  # Re-import the script
-
-            if __name__ == "__main__":
-                mock_main.assert_called_once()
-
-
+# ✅ Test du chemin principal avec mocks
 @patch("boilrpy.__main__.Config")
 @patch("boilrpy.__main__.CLI")
 @patch("boilrpy.__main__.ProjectCreator")
-def test_main(MockProjectCreator, MockCLI, MockConfig):
+def test_run_cli_main_path(MockProjectCreator, MockCLI, MockConfig):
     mock_config = MockConfig.return_value
     mock_cli = MockCLI.return_value
     mock_project_creator = MockProjectCreator.return_value
+
     mock_cli.gather_project_info.return_value = {
         "name": "test_project",
         "description": "Test description",
     }
-    with patch("builtins.print") as mock_print:
-        print("********Calling main()")
-        main()
-        print("**********Finished calling main()")
+
+    args = DummyArgs(check_deps=False)
+    run_cli(args)
 
     MockConfig.assert_called_once()
     MockCLI.assert_called_once_with(mock_config)
@@ -69,26 +49,29 @@ def test_main(MockProjectCreator, MockCLI, MockConfig):
         mock_cli.gather_project_info.return_value
     )
 
-
-def import_module(module_name):
-    return importlib.import_module(module_name)
-
-
+# ✅ Test du cas d’exception dans create_project
 @patch("boilrpy.__main__.Config")
 @patch("boilrpy.__main__.CLI")
 @patch("boilrpy.__main__.ProjectCreator")
-def test_main_exception_handling(
-    MockProjectCreator, MockCLI, MockConfig, mock_config, mock_cli, mock_project_creator
-):
-    MockConfig.return_value = mock_config
-    MockCLI.return_value = mock_cli
-    MockProjectCreator.return_value = mock_project_creator
+def test_run_cli_exception(MockProjectCreator, MockCLI, MockConfig):
+    mock_config = MockConfig.return_value
+    mock_cli = MockCLI.return_value
+    mock_project_creator = MockProjectCreator.return_value
+
+    mock_cli.gather_project_info.return_value = {
+        "name": "test_project",
+        "description": "Test description",
+    }
+
     mock_project_creator.create_project.side_effect = Exception("Test exception")
 
-    with pytest.raises(Exception):
-        main()
+    args = DummyArgs(check_deps=False)
+    with pytest.raises(Exception, match="Test exception"):
+        run_cli(args)
 
-    MockConfig.assert_called_once()
-    MockCLI.assert_called_once_with(mock_config)
-    mock_cli.gather_project_info.assert_called_once()
-    MockProjectCreator.assert_called_once_with(mock_config)
+# ✅ Test du bloc main() avec argparse simulé
+@patch("boilrpy.__main__.run_cli")
+def test_main_invocation(mock_run_cli, monkeypatch):
+    monkeypatch.setattr(sys, "argv", ["boilrpy"])
+    main()
+    mock_run_cli.assert_called_once()

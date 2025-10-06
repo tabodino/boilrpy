@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "boilrpy"
-version = "0.7.0"
+version = "0.7.1"
 description = "A python development boilerplate generator"
 authors = ["Jean-Michel LIEVIN <jeanmichel.liev1@gmail.com>"]
 license = "MIT"
@@ -22,11 +22,14 @@ boilrpy = "boilrpy.__main__:main"
 python = "^3.11"
 toml = "^0.10.2"
 colorama = "^0.4.6"
+flask = "^3.1.0"
+python-dotenv = "^1.0.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.4"
 pytest-cov = "^6.0.0"
 pylint = "^3.3.3"
+ruff = "^0.13.3"
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -41,6 +44,12 @@ testpaths = [
     "tests",
 ]
 
-[project.optional-dependencies]
-dev = ["pytest", "pytest-cov", "pylint"]
+[tool.ruff]
+exclude = [
+  "tests",
+  ".venv",
+  "__pycache__",
+  "build",
+  "dist"
+]
 

@@ -1,7 +1,7 @@
 # ![Logo](https://wesy.fr/img/logo-no-background.svg)
 
 
-boilrpy is a Python project automation tool that simplifies the process of creating new Python projects. It generates a standardized project structure, including essential files and configurations, allowing developers to quickly start working on their Python projects.
+BoilrPy is a Python project automation tool that simplifies the process of creating new Python projects. It generates a standardized project structure, including essential files and configurations, allowing developers to quickly start working on their Python projects.
 
 [![PyPI version](https://badge.fury.io/py/boilrpy.svg)](https://badge.fury.io/py/boilrpy)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -9,12 +9,34 @@ boilrpy is a Python project automation tool that simplifies the process of creat
 ![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen.svg)
 ## Installation
 
-You can install boilrpy directly from PyPI:
+You can install BoilrPy directly from PyPI:
 
 
 ```bash
 pip install boilrpy
 ```
+
+## 📦 Dependency Managers
+
+Boilrpy supports multiple Python dependency managers, each with its own strengths:
+
+### Supported Managers
+
+| Manager | Speed | Lock File | Use Case | Installation |
+|---------|-------|-----------|----------|--------------|
+| **pip** | ⭐⭐⭐ | ❌ | Simple projects, beginners | Pre-installed with Python |
+| **poetry** | ⭐⭐ | ✅ | Professional projects, teams | `pipx install poetry` |
+| **uv** | ⭐⭐⭐⭐⭐ | ✅ | Modern projects, speed-focused | `pip install uv` |
+| **conda** | ⭐ | ❌ | Data science, scientific computing | Download from anaconda.com |
+
+### Quick Comparison
+
+- 🐍 **pip**: Traditional, universal, simple
+- 📦 **poetry**: Modern, professional, reproducible
+- ⚡ **uv**: Blazingly fast (10-100x faster than pip)
+- 🔬 **conda**: Best for data science and non-Python dependencies
+
+For detailed information, see [Dependency Managers Guide](docs/dependencies_manager.md).
 
 ## Quick Start
 
@@ -27,7 +49,7 @@ create_project(
     name="my_awesome_project",
     version="0.1.0",
     license="MIT",
-    use_poetry=True
+    dependencies_manager="poetry" # or "pip", "uv", "conda"
 )
 ```
 
@@ -54,6 +76,11 @@ To create a new Python project using the CLI, run:
 
 ```python
 boilrpy
+```
+
+```python
+# Check installed dependency managers
+boilrpy --check-deps
 ```
 
 Follow the prompts to configure your project. You'll be asked for:

@@ -1,5 +1,30 @@
 # Changelog
 
+## [0.8.0] - 2025-10-06
+
+### ✨ Added
+- Added Ruff as an optional linting tool
+- **Multi-Dependency Manager Support**: Added support for multiple Python dependency managers
+  - `pip`: Traditional Python package installer with venv
+  - `poetry`: Modern dependency management with lock files
+  - `uv`: Ultra-fast Python package installer (10-100x faster than pip)
+  - `conda`: Cross-platform package manager for data science
+- **Dependency Manager Checker**: Added utility to detect installed dependency managers
+  - `DependencyManagerChecker`: Check which managers are available on the system
+  - CLI integration with `--check-deps` flag to verify installations
+  - Automatic fallback to pip when selected manager is not available
+
+### 🔄 Changes
+- **Refactored Dependency Management**:
+  - Replaced `use_poetry` boolean with `dependencies_manager` string for flexibility
+  - Centralized requirements file writing in `BaseDependencyCreator._write_requirements_files()`
+  - Removed code duplication between pip and uv creators
+  - Improved error handling with custom exceptions (`DependencyCreatorNotFoundError`, `DependencyCreatorError`)
+  - Better separation of concerns with abstract base class
+- **Improved Project Creator**:
+  - Updated `ProjectCreator` to use new dependency creator system
+  - Automatic fallback mechanism when selected manager is unavailable
+
 ## [0.7.0] - 2025-02-01
 
 ### 🚀 Stable release

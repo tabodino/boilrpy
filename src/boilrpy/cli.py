@@ -3,10 +3,12 @@ from colorama import Fore, Style
 from boilrpy.input_validator import InputValidator
 from boilrpy.decorators.color_decorator import ColorDecorator
 
+
 class CLI:
     """
     CLI class to gather input from the user.
     """
+
     def __init__(self, config):
         self.config = config
 
@@ -41,9 +43,8 @@ class CLI:
             )
             project_info["license"] = self._choose_license()
 
-            project_info["use_poetry"] = self._yes_no_question(
-                "Use Poetry for dependency management? (y/n) [n]: ", "n"
-            )
+            project_info["dependencies_manager"] = self._choose_dependencies_manager()
+
             project_info["use_docker"] = self._yes_no_question(
                 "Generate Dockerfile? (y/n) [y]: ", "y"
             )
@@ -56,6 +57,7 @@ class CLI:
             project_info["use_flask"] = self._yes_no_question(
                 "Use flask in project? (y/n) [n]: ", "n"
             )
+
             self._display_summary(project_info)
             return project_info
         except KeyboardInterrupt:
@@ -84,8 +86,22 @@ class CLI:
                 pass
             self.display_error("Invalid choice. Please try again.")
 
-    def _yes_no_question(self, question: str, default_response: str = None) -> bool:
+    def _choose_dependencies_manager(self) -> str:
+        dep_manager = self.config.get_available_dep_managers()
+        print(f"\n{Fore.YELLOW}Available dependency managers:{Style.RESET_ALL}")
+        for i, dep in enumerate(dep_manager, 1):
+            print(f"{Fore.CYAN}{i}. {dep}{Style.RESET_ALL}")
+        while True:
+            choice = input("Choose a dependencies manager (enter the number): ")
+            try:
+                index = int(choice) - 1
+                if 0 <= index < len(dep_manager):
+                    return dep_manager[index]
+            except ValueError:
+                pass
+            self.display_error("Invalid choice. Please try again.")
 
+    def _yes_no_question(self, question: str, default_response: str = None) -> bool:
         default_hint = f" [{default_response}]" if default_response else ""
 
         while True:

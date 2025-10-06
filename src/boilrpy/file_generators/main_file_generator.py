@@ -13,6 +13,7 @@ class MainFileGenerator(BaseGenerator):
         :return: Content of main.py file
         """
         return """def main():
+    print("Welcome to your new project!")
     pass
 
 

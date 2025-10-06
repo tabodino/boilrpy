@@ -17,6 +17,15 @@ def test_get_available_licenses(config):
     assert "BSD" in licenses
     assert "None" in licenses
 
+def test_get_available_dep_managers(config):
+    dep_managers = config().get_available_dep_managers()
+    assert isinstance(dep_managers, list)
+    assert len(dep_managers) > 0
+    assert "pip" in dep_managers
+    assert "poetry" in dep_managers
+    assert "uv" in dep_managers
+    assert "conda" in dep_managers
+
 
 def test_get_charset(config):
     charset = config().get_charset()

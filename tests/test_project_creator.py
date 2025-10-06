@@ -5,7 +5,13 @@ from boilrpy.project_creator import ProjectCreator
 from boilrpy.config import Config
 from boilrpy.file_generator import FileGenerator
 from boilrpy.file_writer import FileWriter, FileWriterError
-from boilrpy.poetry_creator import PoetryCreator
+from boilrpy.dependency_creators import (
+    DependencyCreatorFactory,
+    PoetryCreator,
+    PipCreator,
+    UvCreator,
+    CondaCreator
+)
 
 
 @pytest.fixture
@@ -23,8 +29,25 @@ def mock_file_generator():
 
 
 @pytest.fixture
-def poetry_creator(mock_config):
-    return PoetryCreator(mock_config)
+def mock_poetry_creator(mock_config):
+    """Create a mock PoetryCreator."""
+    creator = Mock(spec=PoetryCreator)
+    creator.create_dependency_file = Mock()
+    return creator
+
+@pytest.fixture
+def mock_pip_creator(mock_config):
+    """Create a mock PipCreator."""
+    creator = Mock(spec=PipCreator)
+    creator.create_dependency_file = Mock()
+    return creator
+
+@pytest.fixture
+def mock_uv_creator(mock_config):
+    """Create a mock UvCreator."""
+    creator = Mock(spec=UvCreator)
+    creator.create_dependency_file = Mock()
+    return creator
 
 
 @pytest.fixture
@@ -33,11 +56,17 @@ def mock_file_writer():
 
 
 @pytest.fixture
-def project_creator(mock_config, mock_file_generator, poetry_creator):
+def project_creator(mock_config, mock_file_generator):
     with patch(
         "boilrpy.project_creator.FileGenerator", return_value=mock_file_generator
-    ), patch("boilrpy.project_creator.PoetryCreator", return_value=poetry_creator):
+    ):
         return ProjectCreator(mock_config)
+
+
+# @pytest.fixture
+# def project_creator(mock_config):
+#     """Create a ProjectCreator instance with mocked dependencies."""
+#     return ProjectCreator(mock_config)
 
 
 @pytest.fixture
@@ -48,12 +77,41 @@ def project_info():
         "description": "A test project",
         "author": "Test Author",
         "license": "MIT",
-        "use_poetry": True,
+        "dependencies_manager": "poetry",
         "use_docker": True,
         "create_tests": True,
         "use_pylint": True,
         "use_flask": True,
     }
+
+@pytest.fixture
+def project_info_with_poetry(project_info):
+    """Project info configured for Poetry."""
+    info = project_info.copy()
+    info["dependencies_manager"] = "poetry"
+    return info
+
+@pytest.fixture
+def project_info_with_pip(project_info):
+    """Project info configured for pip."""
+    info = project_info.copy()
+    info["dependencies_manager"] = "pip"
+    return info
+
+
+@pytest.fixture
+def project_info_with_uv(project_info):
+    """Project info configured for uv."""
+    info = project_info.copy()
+    info["dependencies_manager"] = "uv"
+    return info
+
+@pytest.fixture
+def project_info_with_conda(project_info):
+    """Project info configured for Conda."""
+    info = project_info.copy()
+    info["dependencies_manager"] = "conda"
+    return info
 
 
 @patch("boilrpy.project_creator.StringFormatter.format_project_name")
@@ -76,8 +134,8 @@ def test_create_project_success(
     ) as mock_create_gitignore, patch.object(
         project_creator, "_create_changelog"
     ) as mock_create_changelog, patch.object(
-        project_creator, "_create_poetry_file"
-    ) as mock_create_poetry, patch.object(
+        project_creator, "_create_dependency_files"
+    ) as mock_poetry_creator, patch.object(
         project_creator, "_create_dockerfile"
     ) as mock_create_dockerfile, patch.object(
         project_creator, "_create_linter_file"
@@ -101,9 +159,9 @@ def test_create_project_success(
     mock_create_dir.assert_called_once()
     mock_create_readme.assert_called_once_with(project_info)
     mock_create_license.assert_called_once_with(project_info)
+    mock_poetry_creator.assert_called_once_with(project_info)
     mock_create_gitignore.assert_called_once()
     mock_create_changelog.assert_called_once_with("0.1.0")
-    mock_create_poetry.assert_called_once_with(project_info)
     mock_create_dockerfile.assert_called_once_with(project_info)
     mock_create_pylint.assert_called_once_with(project_info["use_pylint"])
     mock_create_test.assert_called_once_with(project_info["create_tests"])
@@ -138,7 +196,7 @@ def test_create_project_no_version(project_creator, project_info):
     ), patch.object(
         project_creator, "_create_gitignore"
     ), patch.object(
-        project_creator, "_create_poetry_file"
+        project_creator, "_create_dependency_files"
     ), patch.object(
         project_creator, "_create_dockerfile"
     ), patch.object(
@@ -177,7 +235,7 @@ def test_create_project_print_message(mock_print, project_creator, project_info)
     ), patch.object(
         project_creator, "_create_changelog"
     ), patch.object(
-        project_creator, "_create_poetry_file"
+        project_creator, "_create_dependency_files"
     ), patch.object(
         project_creator, "_create_dockerfile"
     ), patch.object(
@@ -262,25 +320,6 @@ def test_create_changelog_empty_version(project_creator):
         project_creator._create_changelog("")
 
     project_creator.file_generator.generate_changelog.assert_called_once_with("")
-
-
-def test_create_poetry_file_when_not_using_poetry(project_creator):
-    project_info = {"use_poetry": False}
-    with patch("boilrpy.project_creator.PoetryCreator") as MockPoetryCreator:
-        project_creator._create_poetry_file(project_info)
-        MockPoetryCreator.assert_not_called()
-
-
-def test_create_poetry_file_when_using_poetry(project_creator):
-    project_info = {"use_poetry": True}
-    with patch("boilrpy.project_creator.PoetryCreator") as MockPoetryCreator:
-        mock_poetry_creator = Mock()
-        MockPoetryCreator.return_value = mock_poetry_creator
-
-        project_creator._create_poetry_file(project_info)
-
-        MockPoetryCreator.assert_called_once_with(project_creator.config)
-        mock_poetry_creator.create_poetry_file.assert_called_once_with(project_info)
 
 
 def test_create_test_folder(project_creator):

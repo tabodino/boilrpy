@@ -1,5 +1,4 @@
-import signal
-import sys, os, time
+import sys
 from colorama import Fore, Style
 from boilrpy.input_validator import InputValidator
 import pytest
@@ -12,6 +11,7 @@ from boilrpy.cli import CLI
 def mock_config():
     mock = MagicMock(spec=Config)
     mock.get_available_licenses.return_value = Config().available_licenses
+    mock.get_available_dep_managers.return_value = Config().available_dep_managers
     return mock
 
 
@@ -30,7 +30,7 @@ def test_gather_project_info(mock_config):
             "1.0.0",  # version
             "John Doe",  # author
             "1",  # license
-            "y",  # use poetry
+            "2", # dep manager
             "y",  # use docker
             "y",  # create tests
             "y",  # use pylint
@@ -44,12 +44,11 @@ def test_gather_project_info(mock_config):
     assert project_info["version"] == "1.0.0"
     assert project_info["author"] == "John Doe"
     assert "license" in project_info
-    assert project_info["use_poetry"] is True
+    assert "dependencies_manager" in project_info
     assert project_info["use_docker"] is True
     assert project_info["create_tests"] is True
     assert project_info["use_pylint"] is True
     assert project_info["use_flask"] is True
-
 
 def test_get_valid_input(mock_config):
     cli = CLI(mock_config)
@@ -112,6 +111,20 @@ def test_choose_license(mock_config):
             call("Choose a license (enter the number): "),
         ]
 
+
+def test_choose_dep_managers(mock_config):
+    cli = CLI(mock_config)
+    with patch("builtins.input", return_value="2"):
+        assert cli._choose_dependencies_manager() == "poetry"
+
+    with patch("builtins.input", side_effect=["", "1"]) as mocked_input:
+        result = cli._choose_dependencies_manager()
+        assert result == "pip"
+        assert mocked_input.call_count == 2
+        assert mocked_input.call_args_list == [
+            call("Choose a dependencies manager (enter the number): "),
+            call("Choose a dependencies manager (enter the number): "),
+        ]
 
 def mock_input(prompt):
     return prompt

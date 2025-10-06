@@ -6,13 +6,14 @@ from boilrpy.file_generator import FileGenerator
 from boilrpy.file_writer import FileWriter
 from boilrpy.utils.string_formatter import StringFormatter
 from boilrpy.flask_app_creator import FlaskAppCreator
-from boilrpy.poetry_creator import PoetryCreator
+from boilrpy.dependency_creators import DependencyCreatorFactory
 
 
 class ProjectCreator:
     """
     Class to create a new project.
     """
+
     def __init__(self, config: Config):
         self.project_name = None
         self.config = config
@@ -26,21 +27,19 @@ class ProjectCreator:
 
         Args:
             project_info (dict): Dictionary containing project information
-        
+
         Returns:
             None
         """
         self.project_name = StringFormatter.format_project_name(
-            project_info["name"],
-            self.config.use_camel_case)
+            project_info["name"], self.config.use_camel_case
+        )
 
         project_info["name"] = self.project_name
-        project_info["version"] = project_info.get(
-            "version") or "0.1.0"
+        project_info["version"] = project_info.get("version") or "0.1.0"
 
         if self._check_directory_exist(self.project_name):
-            raise FileExistsError(
-                f"Directory {self.project_name} already exists.")
+            raise FileExistsError(f"Directory {self.project_name} already exists.")
 
         print(f"Creating project {self.project_name}...")
         project_path = self._create_project_directory()
@@ -54,7 +53,7 @@ class ProjectCreator:
 
         self._create_changelog(project_info["version"])
 
-        self._create_poetry_file(project_info)
+        self._create_dependency_files(project_info)
 
         self._create_dockerfile(project_info)
 
@@ -87,7 +86,7 @@ class ProjectCreator:
 
         Args:
             project_info (dict): Dictionary containing project information
-        
+
         Returns:
             None
         """
@@ -98,7 +97,8 @@ class ProjectCreator:
         if project_info["license"] == "None":
             return
         content = self.file_generator.generate_license(
-            project_info["license"], project_info["author"])
+            project_info["license"], project_info["author"]
+        )
         self.file_writer.write_file("LICENSE", content)
 
     def _create_gitignore(self) -> None:
@@ -109,17 +109,29 @@ class ProjectCreator:
         content = self.file_generator.generate_changelog(version)
         self.file_writer.write_file("CHANGELOG.md", content)
 
-    def _create_poetry_file(self, project_info: dict) -> None:
-        if not project_info["use_poetry"]:
-            return
-        poetry_creator = PoetryCreator(self.config)
-        poetry_creator.create_poetry_file(project_info)
+    def _create_dependency_files(self, project_info: dict) -> None:
+        """Create dependency configuration files based on selected manager.
+
+        Args:
+            project_info (dict): Dictionary containing project information
+        """
+        dep_manager = project_info.get("dependencies_manager", "pip")
+
+        try:
+            creator = DependencyCreatorFactory.create(dep_manager, self.config)
+            creator.create_dependency_file(project_info)
+        except ValueError as e:
+            print(f"\n {e}")
+            print("Falling back to pip...")
+            creator = DependencyCreatorFactory.create("pip", self.config)
+            creator.create_dependency_file(project_info)
 
     def _create_dockerfile(self, project_info: dict) -> None:
         if not project_info["use_docker"]:
             return
         content = self.file_generator.generate_dockerfile(
-            self.project_name, project_info["use_flask"])
+            self.project_name, project_info["use_flask"]
+        )
         self.file_writer.write_file("Dockerfile", content)
         ignore_content = self.file_generator.generate_dockerignore()
         self.file_writer.write_file(".dockerignore", ignore_content)
@@ -157,17 +169,20 @@ class ProjectCreator:
             subprocess.run(["git", "--version"], check=True, capture_output=True)
             subprocess.run(["git", "init"], check=True)
         except FileNotFoundError:
-            print(f"{Fore.YELLOW}Git not found on your system. "
-                  f"Skipping Git initialization.{Style.RESET_ALL}"
+            print(
+                f"{Fore.YELLOW}Git not found on your system. "
+                f"Skipping Git initialization.{Style.RESET_ALL}"
             )
-            print(f"{Fore.YELLOW}To use Git with this project, please install Git "
-                  f"and run 'git init' manually in the project directory.{Style.RESET_ALL}"
+            print(
+                f"{Fore.YELLOW}To use Git with this project, please install Git "
+                f"and run 'git init' manually in the project directory.{Style.RESET_ALL}"
             )
         except subprocess.CalledProcessError as e:
-            print(f"{Fore.RED}Error initializing Git repository: "
-                  f"{e}{Style.RESET_ALL}")
-            print(f"{Fore.YELLOW}You may need to initialize the Git repository manually."
-                  f"{Style.RESET_ALL}")
+            print(f"{Fore.RED}Error initializing Git repository: {e}{Style.RESET_ALL}")
+            print(
+                f"{Fore.YELLOW}You may need to initialize the Git repository manually."
+                f"{Style.RESET_ALL}"
+            )
 
     def _check_directory_exist(self, directory: str) -> bool:
         return os.path.exists(directory) and os.path.isdir(directory)
