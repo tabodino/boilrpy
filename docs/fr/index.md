@@ -113,6 +113,13 @@ your_project/
 
 ---
 
+## 🎥 Demo
+
+[Voir la démo vidéo](https://tabodino.github.io/boilrpy/docs/assets/demo-boirlpy.mp4)
+
+
+---
+
 ## 🙌 Contribution
 
 Vous souhaitez améliorer boilrpy ou proposer de nouveaux templates ?  

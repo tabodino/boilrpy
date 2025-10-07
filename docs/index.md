@@ -110,6 +110,13 @@ your_project/
 
 ---
 
+## 🎥 Demo
+
+[See demo on video](https://tabodino.github.io/boilrpy/docs/assets/demo-boirlpy.mp4)
+
+
+---
+
 ## 🙌 Contributing
 
 Want to improve boilrpy or suggest new templates? Open an issue or pull request on [GitHub](https://github.com/tabodino/boilrpy).
