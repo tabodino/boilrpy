@@ -36,7 +36,7 @@ Boilrpy supports multiple Python dependency managers, each with its own strength
 - ⚡ **uv**: Blazingly fast (10-100x faster than pip)
 - 🔬 **conda**: Best for data science and non-Python dependencies
 
-For detailed information, see [Dependency Managers Guide](docs/dependencies_manager.md).
+For detailed information, see [Dependency Managers Guide](https://github.com/tabodino/boilrpy/blob/main/docs/dependencies_manager.md).
 
 ## Quick Start
 
