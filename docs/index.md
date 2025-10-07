@@ -111,8 +111,10 @@ your_project/
 ---
 
 ## 🎥 Demo
-
-[See demo on video](https://tabodino.github.io/boilrpy/docs/assets/demo-boirlpy.mp4)
+<video width="720" controls>
+  <source src="../docs/assets/demo-boilrpy.mp4" type="video/mp4">
+  Votre navigateur ne supporte pas la vidéo HTML5.
+</video>
 
 
 ---
