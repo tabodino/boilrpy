@@ -116,10 +116,11 @@ your_project/
 ## 🎥 Demo
 
 <video width="720" controls>
-  <source src="assets/demo-boilrpy.mp4" type="video/mp4">
+  <source src="https://raw.githubusercontent.com/tabodino/boilrpy/main/docs/assets/demo-boilrpy.mp4" type="video/mp4">
   Votre navigateur ne supporte pas la vidéo HTML5.
 </video>
 
+[Télécharger ou ouvrir la vidéo](https://raw.githubusercontent.com/tabodino/boilrpy/main/docs/assets/demo-boilrpy.mp4)
 
 ---
 
